@@ -13,6 +13,7 @@ services:
       - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-Northway12121}
       - WEBSOCKET_TOKEN=${WEBSOCKET_TOKEN:-Northway12121}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
       - PULSE_SERVER=unix:/run/user/1000/pulse/native
       - PULSE_RUNTIME_PATH=/run/user/1000/pulse
       - PULSE_STATE_PATH=/run/user/1000/pulse
@@ -37,6 +38,7 @@ services:
       # Mount Python files for development
       - ./captionStable.py:/app/captionStable.py
       - ./captionStable_docker.py:/app/captionStable_docker.py
+      - ./github_updater.py:/app/github_updater.py
       # Mount logs directory for debugging
       - ./logs:/app/logs
     restart: unless-stopped

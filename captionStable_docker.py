@@ -893,6 +893,49 @@ async def get_audio_devices():
         log_message(logging.ERROR, f"Failed to get audio devices: {e}")
         return {"devices": [], "error": str(e)}
 
+# -------------------------------------------------------------------
+# GitHub Update Endpoints
+# -------------------------------------------------------------------
+@app.get("/check_updates", dependencies=[Depends(get_current_username)])
+async def check_updates():
+    """Check for GitHub updates"""
+    try:
+        from github_updater import GitHubUpdater
+        updater = GitHubUpdater()
+        status = updater.get_update_status_display()
+        return status
+    except Exception as e:
+        log_message(logging.ERROR, f"Error checking for updates: {e}")
+        return {
+            'status': 'error',
+            'message': f'Error checking for updates: {str(e)}',
+            'last_check': datetime.now().isoformat()
+        }
+
+@app.post("/perform_update", dependencies=[Depends(get_current_username)])
+async def perform_update():
+    """Perform GitHub update"""
+    try:
+        from github_updater import GitHubUpdater
+        updater = GitHubUpdater()
+        result = updater.perform_update()
+        
+        if result['status'] == 'success':
+            log_message(logging.INFO, "GitHub update completed successfully")
+            # Broadcast update notification to all clients
+            await broadcast_update_notification(result)
+        else:
+            log_message(logging.ERROR, f"GitHub update failed: {result['message']}")
+        
+        return result
+    except Exception as e:
+        log_message(logging.ERROR, f"Error performing update: {e}")
+        return {
+            'status': 'error',
+            'message': f'Error performing update: {str(e)}',
+            'timestamp': datetime.now().isoformat()
+        }
+
 @app.post("/setup")
 async def set_setup(setup: dict):
     try:
