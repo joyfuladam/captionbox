@@ -65,4 +65,4 @@ node_modules/
 # Build artifacts
 build/
 dist/
-*.egg-info/
+*.egg-info/.env
