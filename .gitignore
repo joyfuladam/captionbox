@@ -1,0 +1,68 @@
+# Log files
+*.log
+*_backup_*.txt
+caption_log.txt
+local_app.log
+logs/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment variables (sensitive data)
+.env
+.enves
+
+# Large binary files and libraries
+*.so
+*.dll
+*.dylib
+
+# Docker volumes and data
+docker-data/
+.docker/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Large model files (if any)
+*.bin
+*.model
+*.weights
+
+# Audio files (if any)
+*.wav
+*.mp3
+*.flac
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Node modules (if any)
+node_modules/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/

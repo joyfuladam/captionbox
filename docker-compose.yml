@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  caption-app:
+    build: .
+    container_name: caption-stable
+    network_mode: host
+    user: "1000:29"
+    environment:
+      - AZURE_SPEECH_KEY=${AZURE_SPEECH_KEY}
+      - AZURE_SPEECH_REGION=${AZURE_SPEECH_REGION:-eastus}
+      - DEBUG_MODE=${DEBUG_MODE:-false}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-Northway12121}
+      - WEBSOCKET_TOKEN=${WEBSOCKET_TOKEN:-Northway12121}
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+      - PULSE_RUNTIME_PATH=/run/user/1000/pulse
+      - PULSE_STATE_PATH=/run/user/1000/pulse
+      - HOME=/home/nwtech
+      - ALSA_PCM_CARD=1
+      - ALSA_PCM_DEVICE=0
+      - DISPLAY=:0
+    devices:
+      - /dev/snd:/dev/snd
+    group_add:
+      - "29"
+    volumes:
+      # Mount audio for PulseAudio support
+      - /run/user/1000/pulse:/run/user/1000/pulse
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /home/nwtech/.config/pulse/cookie:/home/nwtech/.config/pulse/cookie:ro
+      # Mount configuration files for persistence
+      - ./config.json:/app/config.json
+      - ./dictionary.json:/app/dictionary.json
+      - ./schedule.json:/app/schedule.json
+      - ./user_settings.json:/app/user_settings.json
+      # Mount Python files for development
+      - ./captionStable.py:/app/captionStable.py
+      - ./captionStable_docker.py:/app/captionStable_docker.py
+      # Mount logs directory for debugging
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s 
