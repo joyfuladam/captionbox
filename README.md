@@ -1,156 +1,163 @@
-# Caption3 - Real-time Speech Captioning System
+# Caption3B - Production Captioning System
 
-A real-time speech captioning system that provides live captions with translation support for multiple languages.
+A comprehensive real-time captioning application with Docker support, audio device management, and advanced monitoring capabilities.
 
-## Features
+## 🚀 Features
 
-- Real-time speech recognition and captioning
-- Multi-language translation support (English, Spanish, French, German, Chinese, Japanese, Russian, Arabic)
-- Web-based dashboard for configuration
-- User view with language selection
-- Production view for broadcasting
-- Custom phrase and spelling correction support
-- Scheduled recognition sessions
-- Audio device configuration
+- **Real-time Captioning**: WebSocket-based live captioning with Azure Speech SDK
+- **Docker Support**: Complete containerization with Docker Compose
+- **Audio Management**: Advanced audio device configuration and troubleshooting
+- **Monitoring Tools**: Comprehensive monitoring and diagnostic scripts
+- **WebSocket Integration**: Stable real-time communication for caption streaming
+- **Log Management**: Automated log rotation and analysis tools
+- **Health Checks**: Built-in health monitoring and restart capabilities
 
-## System Requirements
+## 📁 Project Structure
 
-- Python 3.8 or higher
-- macOS, Windows, or Linux
-- Microphone or audio input device
-- Azure Speech Service subscription
-
-## Installation
-
-### 1. Extract the Package
-
-```bash
-unzip caption3-app.zip
-cd caption3-app
+```
+caption3b/
+├── captionStable.py              # Main application file
+├── captionStable_docker.py       # Docker-specific application variant
+├── docker-compose.yml            # Docker Compose configuration
+├── Dockerfile                    # Docker image definition
+├── config.json                   # Application configuration
+├── dictionary.json               # Caption dictionary settings
+├── user_settings.json            # User preferences
+├── schedule.json                 # Schedule configuration
+├── requirements.txt              # Python dependencies
+├── audio-fix.sh                  # Audio device configuration script
+├── monitor_captions.sh           # Comprehensive monitoring dashboard
+├── watch_logs.sh                 # Real-time log monitoring
+├── diagnose_hangs.sh             # Caption pause diagnosis tool
+├── fix_websocket_connections.sh  # WebSocket connection optimization
+├── websocket_monitor.sh          # WebSocket connection monitoring
+├── rotate_logs.sh                # Log rotation and management
+└── README.md                     # This file
 ```
 
-### 2. Set Up Python Environment
+## 🛠️ Setup and Installation
 
+### Prerequisites
+- Docker and Docker Compose
+- Azure Speech Service account
+- Linux system with PulseAudio/ALSA support
+
+### Environment Configuration
+Create a `.env` file with your Azure credentials:
 ```bash
-# Create virtual environment
-python3 -m venv venv
-
-# Activate virtual environment
-# On macOS/Linux:
-source venv/bin/activate
-# On Windows:
-venv\Scripts\activate
+AZURE_SPEECH_KEY=your_azure_speech_key
+AZURE_SERVICE_REGION=eastus
 ```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure Azure Speech Service
-
-1. Get your Azure Speech Service key from the Azure portal
-2. Edit the `.env` file and add your Azure Speech key:
-   ```
-   AZURE_SPEECH_KEY=your_azure_speech_key_here
-   AZURE_SERVICE_REGION=eastus
-   ```
-
-### 5. Configure Admin Credentials
-
-Edit the `launch.sh` (macOS/Linux) or `launch.bat` (Windows) file and update:
-- `ADMIN_USERNAME` - Admin username for dashboard access
-- `ADMIN_PASSWORD` - Admin password for dashboard access
-- `WEBSOCKET_TOKEN` - Token for WebSocket connections
-
-## Usage
 
 ### Quick Start
+1. **Apply Audio Fix** (required for audio device detection):
+   ```bash
+   ./audio-fix.sh
+   ```
 
-```bash
-# Make launch script executable (macOS/Linux only)
-chmod +x launch.sh
+2. **Launch Application**:
+   ```bash
+   docker-compose up -d
+   ```
 
-# Run the application
-./launch.sh
-```
+3. **Monitor System**:
+   ```bash
+   ./monitor_captions.sh
+   ```
 
-### Manual Start
+## 🔧 Key Components
 
-```bash
-# Activate virtual environment
-source venv/bin/activate
+### Audio Management
+- **audio-fix.sh**: Configures PulseAudio and ALSA for Docker containers
+- **docker-audio-setup.sh**: Sets up audio within Docker containers
+- **asound.conf**: ALSA configuration for audio devices
 
-# Set environment variables
-export AZURE_SPEECH_KEY="your_azure_speech_key_here"
-export ADMIN_USERNAME="admin"
-export ADMIN_PASSWORD="your_password"
-export WEBSOCKET_TOKEN="your_token"
+### Monitoring and Diagnostics
+- **monitor_captions.sh**: Comprehensive monitoring dashboard
+- **watch_logs.sh**: Real-time log monitoring with activity detection
+- **diagnose_hangs.sh**: Identifies common causes of caption pauses
+- **fix_websocket_connections.sh**: WebSocket connection optimization
+- **websocket_monitor.sh**: Real-time WebSocket monitoring
 
-# Run the application
-python captionStable.py
-```
+### Log Management
+- **rotate_logs.sh**: Automated log rotation (50MB threshold, 3 backups)
+- **CAPTION_PAUSE_ANALYSIS.md**: Analysis of common caption pause causes
 
-### Access the Application
+## 🐳 Docker Configuration
 
-1. **Dashboard**: http://localhost:8000/dashboard
-   - Username: admin
-   - Password: (as set in launch script)
+The application uses Docker Compose with the following key features:
+- **Network Mode**: Host networking for audio device access
+- **Volume Mounts**: Configuration files, logs, and audio device access
+- **Health Checks**: Built-in health monitoring
+- **Environment Variables**: Azure credentials and system configuration
+- **User Mapping**: Proper user/group mapping for audio access
 
-2. **User View**: http://localhost:8000/user
-   - Public access for viewing captions
+## 📊 Monitoring and Troubleshooting
 
-3. **Setup**: http://localhost:8000/setup
-   - Configure audio devices and Azure key
+### Common Issues and Solutions
 
-## Configuration Files
+1. **Audio Devices Not Detected**:
+   ```bash
+   ./audio-fix.sh
+   docker-compose restart
+   ```
 
-- `config.json` - Main application configuration
-- `dictionary.json` - Custom phrases, spelling corrections, and supported languages
-- `user_settings.json` - User view display settings
-- `schedule.json` - Scheduled recognition sessions
+2. **Caption Pauses/Hangs**:
+   ```bash
+   ./diagnose_hangs.sh
+   ./monitor_captions.sh
+   ```
 
-## Troubleshooting
+3. **WebSocket Connection Issues**:
+   ```bash
+   ./fix_websocket_connections.sh
+   ./websocket_monitor.sh
+   ```
 
-### Common Issues
+4. **Log File Management**:
+   ```bash
+   ./rotate_logs.sh
+   ```
 
-1. **Audio Device Not Found**
-   - Visit http://localhost:8000/setup to configure audio devices
-   - Ensure microphone permissions are granted
+### Monitoring Commands
+- `./monitor_captions.sh` - Full system monitoring dashboard
+- `./watch_logs.sh` - Real-time log monitoring
+- `docker logs caption-stable -f` - Docker container logs
+- `docker exec caption-stable ps aux` - Container process monitoring
 
-2. **Azure Speech Service Error**
-   - Verify your Azure Speech key is correct
-   - Check your Azure subscription status
-   - Ensure the service region is correct
+## 🔐 Security Features
 
-3. **Port Already in Use**
-   - The app uses port 8000 by default
-   - Stop other applications using this port
-   - Or modify the port in `captionStable.py`
+- Basic authentication for admin endpoints
+- WebSocket token authentication
+- Environment variable protection for sensitive data
+- Docker security best practices
 
-### Logs
+## 📈 Performance Optimization
 
-Check `caption_log.txt` for detailed application logs and error messages.
+- WebSocket connection pooling
+- Audio buffer optimization
+- Log rotation to prevent disk space issues
+- Health check monitoring for automatic recovery
 
-## File Structure
+## 🚨 Production Notes
 
-```
-caption3-app/
-├── captionStable.py          # Main application
-├── requirements.txt          # Python dependencies
-├── config.json              # Application configuration
-├── dictionary.json          # Custom phrases and languages
-├── user_settings.json       # User view settings
-├── schedule.json            # Scheduled sessions
-├── .env                     # Environment variables
-├── launch.sh                # Launch script (macOS/Linux)
-├── launch.bat               # Launch script (Windows)
-├── README.md                # This file
-├── *.html                   # Web interface files
-└── venv/                    # Python virtual environment
-```
+This system has been optimized for production use with:
+- Comprehensive error handling and recovery
+- Detailed logging and monitoring
+- Audio device stability fixes
+- WebSocket connection optimization
+- Automated maintenance tools
 
-## Support
+## 📝 License
 
-For issues or questions, check the logs in `caption_log.txt` or review the configuration files. 
+This project is part of the Northway Technologies captioning system.
+
+## 🤝 Support
+
+For technical support and troubleshooting, refer to the monitoring tools and diagnostic scripts included in this repository.
+
+---
+
+**Last Updated**: September 3, 2024  
+**Version**: Caption3B Production  
+**Status**: Production Ready
